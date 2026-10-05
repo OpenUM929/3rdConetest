@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>AI 서낭 구상도 - 모바일</title>
+<style>
+  :root{
+    --danger:#E5383B;
+    --danger-soft:#FBE3E4;
+    --warn:#F4A259;
+    --safe:#1B7F79;
+    --safe-soft:#DCEFED;
+    --legacy:#9AA3AE;
+    --ink:#10151C;
+    --sub:#5C6672;
+    --line:#E3E7EC;
+    --bg:#EEF1F5;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',-apple-system,sans-serif;
+    background:var(--bg);
+    display:flex;flex-direction:column;align-items:center;
+    padding:48px 20px;color:var(--ink);
+  }
+  .caption{
+    text-align:center;margin-bottom:28px;max-width:420px;
+  }
+  .caption h1{font-size:20px;letter-spacing:-0.5px;margin-bottom:8px}
+  .caption p{font-size:13px;color:var(--sub);line-height:1.6}
+  .phone{
+    width:390px;background:#fff;border-radius:44px;
+    border:11px solid #11161D;
+    box-shadow:0 30px 60px rgba(16,21,28,.28);
+    overflow:hidden;position:relative;
+  }
+  .notch{
+    position:absolute;top:0;left:50%;transform:translateX(-50%);
+    width:150px;height:26px;background:#11161D;
+    border-radius:0 0 18px 18px;z-index:9;
+  }
+  .statusbar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:32px 20px 6px;font-size:12px;font-weight:700;
+  }
+  .appbar{
+    padding:8px 20px 14px;display:flex;justify-content:space-between;align-items:center;
+  }
+  .logo{font-size:19px;font-weight:800;letter-spacing:-0.6px}
+  .logo span{color:var(--safe)}
+  .ctx{
+    font-size:11px;font-weight:700;color:var(--sub);
+    background:#F2F5F8;border-radius:20px;padding:6px 11px;
+  }
+  .alert{
+    margin:0 16px 12px;background:var(--danger-soft);
+    border-left:4px solid var(--danger);border-radius:12px;
+    padding:13px 15px;
+  }
+  .alert .tag{
+    font-size:10px;font-weight:800;color:var(--danger);
+    letter-spacing:1px;margin-bottom:5px;
+  }
+  .alert .msg{font-size:14px;font-weight:700;line-height:1.5}
+  .alert .msg b{color:var(--danger)}
+  .map{margin:0 16px;border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+  .routes{display:flex;gap:9px;margin:12px 16px 0}
+  .rcard{
+    flex:1;border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;
+  }
+  .rcard.sel{border-color:var(--safe);background:var(--safe-soft)}
+  .rcard .rname{font-size:11px;font-weight:800;color:var(--sub);margin-bottom:6px}
+  .rcard.sel .rname{color:var(--safe)}
+  .rcard .rtime{font-size:21px;font-weight:800;letter-spacing:-1px}
+  .rcard .rrisk{font-size:11px;font-weight:700;margin-top:3px}
+  .risk-hi{color:var(--danger)}
+  .risk-lo{color:var(--safe)}
+  .why{margin:13px 16px 0}
+  .why .wtit{font-size:11px;font-weight:800;color:var(--sub);margin-bottom:7px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{
+    font-size:11px;font-weight:700;padding:5px 9px;border-radius:7px;
+    background:#F2F5F8;color:var(--sub);
+  }
+  .chip.up{background:var(--danger-soft);color:var(--danger)}
+  .flow{
+    display:flex;margin:15px 16px 0;border-top:1px solid var(--line);padding-top:12px;
+  }
+  .step{flex:1;text-align:center}
+  .step .n{
+    font-size:10px;font-weight:800;color:var(--safe);
+    letter-spacing:.5px;margin-bottom:3px;
+  }
+  .step .d{font-size:10px;color:var(--sub);line-height:1.4}
+  .disc{
+    font-size:9px;color:#667381;text-align:center;
+    padding:11px 20px 20px;line-height:1.5;
+  }
+
+  .foot,.disc{gap:12px;line-height:1.6;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<div class="caption">
+  <h1>AI 서낭 — 아이 휴대폰 화면</h1>
+  <p>같은 길도 시간과 날씨에 따라 위험이 달라질 수 있습니다.<br>출발 전에 경로를 고르고, 이동 중에는 음성·진동으로 안내할 계획입니다.</p>
+</div>
+
+<div class="phone">
+  <div class="notch"></div>
+
+  <div class="statusbar">
+    <span>8:05</span>
+    <span>월요일 · 비 · 등교시간</span>
+  </div>
+
+  <div class="appbar">
+    <div class="logo">AI 서낭</div>
+    <div class="ctx">출발 전 시안</div>
+  </div>
+
+  <div class="alert">
+    <div class="tag">출발 전 · 오늘 지나갈 구간</div>
+    <div class="msg">오늘 경로의 구간 점수는<br><b>81</b>입니다. 다른 길로 안내할까요?</div>
+  </div>
+
+  <div class="map">
+    <svg viewBox="0 0 358 262" width="100%" height="262">
+      <rect width="358" height="262" fill="#F7F9FB"/>
+
+      <!-- 블록 -->
+      <g fill="#EDF1F5">
+        <rect x="18" y="20" width="86" height="64" rx="4"/>
+        <rect x="140" y="20" width="96" height="64" rx="4"/>
+        <rect x="272" y="20" width="70" height="64" rx="4"/>
+        <rect x="18" y="120" width="86" height="56" rx="4"/>
+        <rect x="140" y="120" width="96" height="56" rx="4"/>
+        <rect x="272" y="120" width="70" height="56" rx="4"/>
+        <rect x="18" y="212" width="86" height="34" rx="4"/>
+        <rect x="140" y="212" width="96" height="34" rx="4"/>
+        <rect x="272" y="212" width="70" height="34" rx="4"/>
+      </g>
+
+      <!-- 도로 -->
+      <g stroke="#DCE2E9" stroke-width="13" stroke-linecap="round">
+        <line x1="10" y1="102" x2="348" y2="102"/>
+        <line x1="10" y1="194" x2="348" y2="194"/>
+        <line x1="122" y1="10" x2="122" y2="252"/>
+        <line x1="254" y1="10" x2="254" y2="252"/>
+      </g>
+
+      <!-- 위험 핫스팟 -->
+      <circle cx="122" cy="102" r="30" fill="#E5383B" opacity=".13"/>
+      <circle cx="122" cy="102" r="18" fill="#E5383B" opacity=".22"/>
+      <circle cx="254" cy="102" r="24" fill="#E5383B" opacity=".11"/>
+
+      <!-- 최단경로 (위험) -->
+      <polyline points="42,228 42,102 254,102 254,44 318,44"
+                fill="none" stroke="#E5383B" stroke-width="5"
+                stroke-dasharray="9 6" stroke-linecap="round" opacity=".85"/>
+
+      <!-- AI 서낭 경로 (안전) -->
+      <polyline points="42,228 122,228 122,194 318,194 318,44"
+                fill="none" stroke="#1B7F79" stroke-width="6"
+                stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- 마커 -->
+      <circle cx="42" cy="228" r="9" fill="#11161D"/>
+      <text x="42" y="232" font-size="9" fill="#fff" text-anchor="middle" font-weight="700">집</text>
+      <circle cx="318" cy="44" r="11" fill="#1B7F79"/>
+      <text x="318" y="48" font-size="9" fill="#fff" text-anchor="middle" font-weight="700">학교</text>
+
+      <!-- 위험 라벨 -->
+      <rect x="86" y="68" width="72" height="19" rx="9" fill="#E5383B"/>
+      <text x="122" y="81" font-size="10" fill="#fff" text-anchor="middle" font-weight="800">위험도 81</text>
+
+      <!-- 범례 -->
+      <rect x="196" y="222" width="152" height="30" rx="7" fill="#fff" opacity=".95"/>
+      <line x1="206" y1="232" x2="224" y2="232" stroke="#E5383B" stroke-width="4" stroke-dasharray="7 5"/>
+      <text x="230" y="236" font-size="9.5" fill="#5C6672" font-weight="700">최단</text>
+      <line x1="262" y1="232" x2="280" y2="232" stroke="#1B7F79" stroke-width="4"/>
+      <text x="286" y="236" font-size="9.5" fill="#5C6672" font-weight="700">AI 서낭</text>
+      <text x="206" y="247" font-size="8.5" fill="#9AA3AE">지도는 경로 비교 개념도</text>
+    </svg>
+  </div>
+
+  <div class="routes">
+    <div class="rcard">
+      <div class="rname">최단 경로</div>
+      <div class="rtime">17분</div>
+      <div class="rrisk risk-hi">평균위험 85</div>
+    </div>
+    <div class="rcard sel">
+      <div class="rname">AI 서낭 추천</div>
+      <div class="rtime">23분</div>
+      <div class="rrisk risk-lo">평균위험 33</div>
+    </div>
+  </div>
+
+  <div style="margin:9px 16px 0;background:#DCEFED;border-radius:9px;
+              padding:9px 12px;font-size:11.5px;font-weight:700;color:#1B7F79;
+              text-align:center">
+    가상 실험: 약 6분 추가 · 계산상 노출 약 46%↓<br>비 오는 등교시간 / 전체 도로망 탐색 조건
+  </div>
+
+  <div class="why">
+    <div class="wtit">왜 위험하다고 봤나요</div>
+    <div class="chips">
+      <span class="chip up">↑ 등교시간대</span>
+      <span class="chip up">↑ 강수</span>
+      <span class="chip up">↑ 사고이력</span>
+      <span class="chip up">↑ 횡단보도 밀집</span>
+      <span class="chip">보호구역 내</span>
+    </div>
+  </div>
+
+  <div class="flow">
+    <div class="step">
+      <div class="n">PREDICT</div>
+      <div class="d">구간별 위험도<br>예측</div>
+    </div>
+    <div class="step">
+      <div class="n">ROUTE</div>
+      <div class="d">덜 위험한 길<br>안내</div>
+    </div>
+    <div class="step">
+      <div class="n">INTERVENE</div>
+      <div class="d">음성·진동<br>안전행동 유도</div>
+    </div>
+  </div>
+
+  <div class="disc">
+    구현 전 시안 · 수치는 고정 계수 가상 실험값입니다.<br>실제 사고 확률·감소율이 아닙니다.<br>통행 기록 구간으로 후보를 제한한 실험은 약 37%↓,<br>추가시간은 동일하게 약 6분이었습니다.<br>‘3분’은 위험구간 도착 전 안내의 설계 목표입니다.
+  </div>
+</div>
+
+</body>
+</html>

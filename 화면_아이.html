@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>AI 서낭 - 아이 화면 흐름</title>
+<style>
+  :root{
+    --danger:#E5383B; --danger-soft:#FBE3E4;
+    --warn:#F4A259;   --warn-soft:#FDF0E2;
+    --safe:#1B7F79;   --safe-soft:#DCEFED;
+    --ink:#10151C; --sub:#5C6672; --line:#E3E7EC;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',-apple-system,sans-serif;
+    background:#E9ECF1;padding:34px 30px;color:var(--ink);
+    display:flex;justify-content:center;
+  }
+  .sheet{width:1380px;background:#fff;border-radius:12px;padding:28px 30px 26px;
+         box-shadow:0 16px 44px rgba(16,21,28,.14)}
+  .head{display:flex;justify-content:space-between;align-items:flex-end;
+        border-bottom:2px solid var(--ink);padding-bottom:11px;margin-bottom:9px}
+  .brand{font-size:22px;font-weight:800;letter-spacing:-0.7px}
+  .brand span{color:var(--safe)}
+  .brand em{font-style:normal;font-size:12.5px;font-weight:600;color:var(--sub);margin-left:10px}
+  .ctx{font-size:12px;font-weight:700;color:var(--sub)}
+  .scene{font-size:11.5px;color:var(--sub);margin-bottom:18px}
+  .scene b{color:var(--ink)}
+
+  .row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .col{display:flex;flex-direction:column}
+  .step{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+  .num{width:19px;height:19px;border-radius:50%;background:var(--safe);color:#fff;
+       font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .stit{font-size:13px;font-weight:800;letter-spacing:-0.3px}
+  .sdesc{font-size:10.5px;color:var(--sub);line-height:1.55;margin-bottom:10px;min-height:33px}
+
+  .phone{border:7px solid #11161D;border-radius:24px;overflow:hidden;background:#fff}
+  .pbar{display:flex;justify-content:space-between;padding:7px 11px 5px;
+        font-size:9px;font-weight:700;color:var(--sub)}
+  .phd{padding:0 11px 7px;font-size:13.5px;font-weight:800;letter-spacing:-0.4px}
+  .phd span{color:var(--safe)}
+  .pbody{padding:0 9px 10px}
+
+  .card{border-radius:9px;padding:9px 10px;margin-bottom:7px}
+  .c-warn{background:var(--danger-soft);border-left:3px solid var(--danger)}
+  .c-safe{background:var(--safe-soft);border-left:3px solid var(--safe)}
+  .c-plain{border:1px solid var(--line)}
+  .ctag{font-size:8.5px;font-weight:800;letter-spacing:.5px;margin-bottom:4px}
+  .t-r{color:var(--danger)} .t-g{color:var(--safe)} .t-s{color:var(--sub)}
+  .cmsg{font-size:11px;font-weight:700;line-height:1.5}
+  .cmsg b{color:var(--danger)}
+
+  .routes{display:flex;gap:6px;margin-bottom:7px}
+  .rc{flex:1;border:1.4px solid var(--line);border-radius:8px;padding:7px 8px}
+  .rc.sel{border-color:var(--safe);background:var(--safe-soft)}
+  .rn{font-size:8.5px;font-weight:800;color:var(--sub)}
+  .rc.sel .rn{color:var(--safe)}
+  .rt{font-size:16px;font-weight:800;letter-spacing:-0.5px;margin-top:1px}
+  .rr{font-size:9px;font-weight:700}
+  .hi{color:var(--danger)} .lo{color:var(--safe)}
+
+  .btn{border-radius:8px;padding:9px;text-align:center;font-size:11.5px;font-weight:800;
+       background:var(--safe);color:#fff;margin-top:2px}
+  .btn.ghost{background:#F2F5F8;color:var(--sub)}
+
+  /* 화면 꺼짐 */
+  .dark{background:#0C1116;border-radius:9px;padding:26px 12px;text-align:center;color:#fff}
+  .dark .big{font-size:13px;font-weight:800;line-height:1.5;margin-bottom:9px}
+  .dark .sm{font-size:9.5px;color:#8B97A5;line-height:1.6}
+  .waves{display:flex;justify-content:center;gap:5px;margin:14px 0 12px}
+  .w{width:5px;border-radius:3px;background:var(--safe)}
+
+  /* 미션 */
+  .mission{background:var(--warn-soft);border:2px solid var(--warn);border-radius:9px;
+           padding:16px 11px;text-align:center}
+  .mission .mt{font-size:9px;font-weight:800;color:#B5751F;letter-spacing:.8px;margin-bottom:7px}
+  .mission .mb{font-size:17px;font-weight:800;line-height:1.35;margin-bottom:8px}
+  .lr{display:flex;justify-content:center;gap:16px;margin-top:9px}
+  .lrb{font-size:10px;font-weight:800;color:#B5751F;border:1.5px solid var(--warn);
+       border-radius:6px;padding:5px 11px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+  .chip{font-size:8.5px;font-weight:700;padding:3px 6px;border-radius:5px;
+        background:var(--danger-soft);color:var(--danger)}
+  .chip.n{background:#F2F5F8;color:var(--sub)}
+
+  .share{border:1px dashed var(--line);border-radius:8px;padding:8px 9px;margin-top:6px}
+  .share .st{font-size:8.5px;font-weight:800;color:var(--sub);margin-bottom:5px}
+  .share .si{font-size:9.5px;color:var(--sub);line-height:1.7}
+  .share .si b{color:var(--ink)}
+
+  .foot{margin-top:20px;padding-top:11px;border-top:1px solid var(--line);
+        font-size:9.5px;color:#667381;display:flex;justify-content:space-between}
+
+  .foot,.disc{gap:12px;line-height:1.6;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="head">
+    <div class="brand">AI 서낭<em>아이 화면 — 등굣길 한 번의 흐름</em></div>
+    <div class="ctx">월요일 08:05 · 비 · 등교시간</div>
+  </div>
+  <div class="scene">
+    비 오는 월요일 아침입니다. 시간·날씨에 따른 통학 안내를 보여주는 가상 이용 장면입니다.
+    <b>집을 나서기 전에 길을 정하고, 걷는 동안에는 화면을 보지 않고, 횡단 전에는 멈춰서 좌우와 신호를 확인합니다.</b>
+  </div>
+
+  <div class="row">
+
+    <!-- 1 출발 전 -->
+    <div class="col">
+      <div class="step"><div class="num">1</div><div class="stit">출발 전 · 길 정하기</div></div>
+      <div class="sdesc">오늘 조건으로 계산한 위험도를 보고 어느 길로 갈지 고릅니다. 화면이 필요한 일은 여기서 끝냅니다.</div>
+      <div class="phone">
+        <div class="pbar"><span>8:03</span><span>월 · 비</span></div>
+        <div class="phd">AI 서낭</div>
+        <div class="pbody">
+          <div class="card c-warn">
+            <div class="ctag t-r">오늘 등굣길</div>
+            <div class="cmsg">비 오는 등교시간,<br>주의할 횡단보도를 미리 살펴보세요.</div>
+          </div>
+          <div class="routes">
+            <div class="rc">
+              <div class="rn">평소 길</div><div class="rt">17분</div>
+              <div class="rr hi">추정 위험 높음</div>
+            </div>
+            <div class="rc sel">
+              <div class="rn">오늘 추천</div><div class="rt">23분</div>
+              <div class="rr lo">추정 위험 낮음</div>
+            </div>
+          </div>
+          <div class="card c-safe" style="padding:7px 9px">
+            <div class="cmsg" style="font-size:10.5px;color:var(--safe)">
+              예상 6분 추가 · 추정 위험은 낮은 길<br>
+              <span style="font-weight:600;color:var(--sub)">보호자와 확인한 후보 길에서 비교</span>
+            </div>
+          </div>
+          <div class="btn">오늘은 추천 길로 가기</div>
+          <div class="btn ghost" style="margin-top:5px">평소 길로 갈게요</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 이동 중 -->
+    <div class="col">
+      <div class="step"><div class="num">2</div><div class="stit">걷는 중 · 음성 안내</div></div>
+      <div class="sdesc">걸으면서 화면을 보는 것 자체가 위험합니다. 길 위에서는 소리와 진동만 씁니다.</div>
+      <div class="phone">
+        <div class="pbar"><span>8:11</span><span>안내 중</span></div>
+        <div class="phd">AI 서낭</div>
+        <div class="pbody">
+          <div class="dark">
+            <div class="waves">
+              <div class="w" style="height:11px"></div>
+              <div class="w" style="height:20px"></div>
+              <div class="w" style="height:29px"></div>
+              <div class="w" style="height:20px"></div>
+              <div class="w" style="height:11px"></div>
+            </div>
+            <div class="big">화면을 보지 않아도<br>됩니다</div>
+            <div class="sm">
+              음성과 진동으로만 안내합니다<br>
+              주머니에 넣고 앞을 보며 걸으세요
+            </div>
+          </div>
+          <div class="card c-plain" style="margin-top:7px">
+            <div class="ctag t-s">방금 들린 안내</div>
+            <div class="cmsg" style="font-weight:600;font-size:10.5px;color:var(--sub)">
+              "앞쪽 횡단보도는 오늘 위험해요.<br>횡단보도 앞에서 멈춰 좌우를 보세요."
+            </div>
+          </div>
+          <div class="share">
+            <div class="st">지금 보호자에게 전달 중</div>
+            <div class="si">출발 <b>8:05</b> · 도착 예정 <b>8:28</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 위험구간 -->
+    <div class="col">
+      <div class="step"><div class="num">3</div><div class="stit">위험구간 · 안전 미션</div></div>
+      <div class="sdesc">돌아갈 수 없는 횡단보도에서는 건너기 전 행동을 바꿉니다. 하루에 몇 곳만 울립니다.</div>
+      <div class="phone">
+        <div class="pbar"><span>8:19</span><span>진동</span></div>
+        <div class="phd">AI 서낭</div>
+        <div class="pbody">
+          <div class="mission">
+            <div class="mt">주의할 횡단보도 · 음성 안내 예시</div>
+            <div class="mb">멈춰서<br>좌우를 보세요</div>
+            <div class="lr">
+              <div class="lrb">← 왼쪽</div>
+              <div class="lrb">오른쪽 →</div>
+            </div>
+          </div>
+          <div class="card c-plain" style="margin-top:7px">
+            <div class="ctag t-s">왜 여기가 위험한가요</div>
+            <div class="chips">
+              <span class="chip">↑ 등교시간</span>
+              <span class="chip">↑ 비</span>
+              <span class="chip">↑ 사고이력</span>
+              <span class="chip n">보호구역 안</span>
+            </div>
+          </div>
+          <div class="card c-plain">
+            <div class="ctag t-s">오늘 울린 알림</div>
+            <div class="cmsg" style="font-weight:600;font-size:10.5px;color:var(--sub)">
+              이 횡단보도 한 곳<br>
+              <span style="font-size:9.5px">알림이 없는 구간에서도 주의하세요</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 도착 -->
+    <div class="col">
+      <div class="step"><div class="num">4</div><div class="stit">도착 · 공유 내역</div></div>
+      <div class="sdesc">무엇이 보호자에게 갔는지 아이도 그대로 봅니다. 모르는 채 전달되는 것은 없습니다.</div>
+      <div class="phone">
+        <div class="pbar"><span>8:28</span><span>도착</span></div>
+        <div class="phd">AI 서낭</div>
+        <div class="pbody">
+          <div class="card c-safe">
+            <div class="ctag t-g">도착</div>
+            <div class="cmsg" style="color:var(--safe)">학교 도착이 확인됐어요<br>
+              <span style="font-weight:600;font-size:10px;color:var(--sub)">23분 걸렸고 위험구간 1곳을 지났습니다</span>
+            </div>
+          </div>
+          <div class="share">
+            <div class="st">오늘 보호자에게 전달된 것</div>
+            <div class="si">
+              출발 <b>8:05</b><br>
+              도착 <b>8:28</b><br>
+              지나온 길 · 위험구간 <b>1곳</b>
+            </div>
+          </div>
+          <div class="share">
+            <div class="st">전달되지 않은 것</div>
+            <div class="si" style="color:#667381">
+              안내를 끈 동안의 위치<br>
+              걸음마다의 좌표 기록
+            </div>
+          </div>
+          <div class="card c-plain">
+            <div class="ctag t-s">기록 보관</div>
+            <div class="cmsg" style="font-weight:600;font-size:10px;color:var(--sub)">
+              보관 기간은 이용 전에 안내하고<br>필요한 기간 후 삭제할 계획입니다
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    <span>구현 전 이용 시나리오 · 시간·안내 내용은 설명용 예시입니다. 이동 중 화면 조작 없이 음성·진동으로 안내할 계획입니다.</span>
+    <span>AI 서낭 — 3분 먼저 피하는 등하굣길</span>
+  </div>
+
+</div>
+</body>
+</html>

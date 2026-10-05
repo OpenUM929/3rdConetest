@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>AI 서낭 - 시스템 흐름도</title>
+<style>
+  :root{
+    --safe:#1B7F79; --safe-soft:#DCEFED;
+    --danger:#E5383B; --danger-soft:#FBE3E4;
+    --warn:#F4A259; --warn-soft:#FDF0E2;
+    --ink:#10151C; --sub:#5C6672; --line:#E3E7EC; --legacy:#9AA3AE;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',-apple-system,sans-serif;
+    background:#E9ECF1;padding:34px 30px;color:var(--ink);display:flex;justify-content:center;
+  }
+  .sheet{width:1420px;background:#fff;border-radius:12px;padding:28px 32px 24px;
+         box-shadow:0 16px 44px rgba(16,21,28,.14)}
+  .head{display:flex;justify-content:space-between;align-items:flex-end;
+        border-bottom:2px solid var(--ink);padding-bottom:11px;margin-bottom:18px}
+  .brand{font-size:22px;font-weight:800;letter-spacing:-0.7px}
+  .brand span{color:var(--safe)}
+  .brand em{font-style:normal;font-size:12.5px;font-weight:600;color:var(--sub);margin-left:10px}
+
+  .stage-label{font-size:10px;font-weight:800;letter-spacing:1.2px;color:var(--sub);
+               margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .stage-label::after{content:"";flex:1;height:1px;background:var(--line)}
+
+  .flow{display:grid;grid-template-columns:230px 36px 1fr 36px 250px;align-items:start;
+        gap:0;margin-bottom:16px}
+  .arrow{display:flex;align-items:center;justify-content:center;padding-top:60px;
+         font-size:22px;color:var(--safe);font-weight:800}
+
+  .box{border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;margin-bottom:8px}
+  .box .bt{font-size:11.5px;font-weight:800;margin-bottom:5px;display:flex;
+           justify-content:space-between;align-items:baseline}
+  .box .src{font-size:8.5px;font-weight:700;color:var(--legacy)}
+  .box .bd{font-size:10px;color:var(--sub);line-height:1.6}
+  .box .bd b{color:var(--ink);font-weight:700}
+  .box.pub{border-color:#B9C6D2;background:#F8FAFC}
+  .box.core{border-color:var(--safe);background:#F7FCFB;border-width:2px}
+  .box.out{border-color:var(--warn);background:#FFFCF8}
+
+  .core-wrap{border:2px dashed var(--safe);border-radius:12px;padding:13px;background:#FCFEFE}
+  .core-tag{font-size:9.5px;font-weight:800;color:var(--safe);letter-spacing:.8px;margin-bottom:9px}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+  .st{border:1.5px solid var(--line);border-radius:9px;padding:10px 11px;background:#fff;position:relative}
+  .st::after{content:"→";position:absolute;right:-9px;top:50%;transform:translateY(-50%);
+             font-size:15px;color:var(--safe);font-weight:800;z-index:2}
+  .st:last-child::after{content:""}
+  .st .k{font-size:8.5px;font-weight:800;color:var(--safe);letter-spacing:.7px}
+  .st .h{font-size:12.5px;font-weight:800;margin:3px 0 5px;letter-spacing:-0.3px}
+  .st .d{font-size:9.5px;color:var(--sub);line-height:1.6}
+  .st .d b{color:var(--ink)}
+
+  .guard{margin-top:10px;border:1.5px solid var(--danger);border-radius:9px;
+         padding:9px 12px;background:var(--danger-soft)}
+  .guard .gt{font-size:10px;font-weight:800;color:var(--danger);margin-bottom:4px}
+  .guard .gd{font-size:9.5px;color:#8A3034;line-height:1.6}
+
+  .feedback{margin-top:14px;border:1.5px dashed var(--legacy);border-radius:10px;
+            padding:11px 14px;background:#FAFBFC;display:flex;gap:14px;align-items:center}
+  .fb-arrow{font-size:17px;color:var(--legacy);font-weight:800}
+  .fb-t{font-size:11px;font-weight:800;color:var(--sub);margin-bottom:3px}
+  .fb-d{font-size:9.5px;color:var(--sub);line-height:1.6}
+  .fb-d b{color:var(--ink)}
+
+  .foot{margin-top:16px;padding-top:11px;border-top:1px solid var(--line);
+        font-size:9.5px;color:#667381;display:flex;justify-content:space-between}
+
+  .foot,.disc{gap:12px;line-height:1.6;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="head">
+    <div class="brand">AI 서낭<em>시스템 흐름도 · 구현 계획</em></div>
+    <div style="font-size:11.5px;font-weight:700;color:var(--sub)">공공데이터 → 위험 추정 → 경로 비교 → 보행 안내</div>
+  </div>
+
+  <div class="flow">
+
+    <!-- 입력 -->
+    <div>
+      <div class="stage-label">입력 자료</div>
+      <div class="box pub">
+        <div class="bt">사고 이력 <span class="src">TAAS</span></div>
+        <div class="bd">어린이 사고다발지역·사고 통계<br>개별 사고의 세부 항목은 제작 시 확인</div>
+      </div>
+      <div class="box pub">
+        <div class="bt">도로 · 시설 <span class="src">공공데이터포털</span></div>
+        <div class="bd">횡단보도, 학교, 어린이보호구역 위치</div>
+      </div>
+      <div class="box pub">
+        <div class="bt">도로망 <span class="src">표준노드링크</span></div>
+        <div class="bd">경로 계산용 구간 연결 정보<br>
+          <span style="color:#B06A2E">보행 경로로 충분한지 별도 확인 필요</span></div>
+      </div>
+      <div class="box pub">
+        <div class="bt">기상 <span class="src">기상청 API</span></div>
+        <div class="bd">강수·기상 관측 및 예보 자료</div>
+      </div>
+      <div class="box pub">
+        <div class="bt">통행량 <span class="src">향후 확보·집계</span></div>
+        <div class="bd">확보 가능한 통행 자료와<br>동의받아 집계할 구간별 통행 빈도</div>
+      </div>
+    </div>
+
+    <div class="arrow">›</div>
+
+    <!-- 처리 -->
+    <div>
+      <div class="stage-label">처리</div>
+      <div class="core-wrap">
+        <div class="core-tag">AI 서낭 엔진</div>
+        <div class="steps">
+          <div class="st">
+            <div class="k">01 PREDICT</div>
+            <div class="h">위험 추정</div>
+            <div class="d">
+              도로를 짧은 구간으로 나누고<br>
+              <b>구간 × 시간대 × 기상</b>을 한 줄로 만들어 학습<br><br>
+              로지스틱 회귀를 기준 모델로,<br>LightGBM과 비교<br><br>
+              구간별 <b>0~100</b> 상대 점수와<br>그 점수에 영향을 준 요인을 함께 출력
+            </div>
+          </div>
+          <div class="st">
+            <div class="k">02 ROUTE</div>
+            <div class="h">경로 비교</div>
+            <div class="d">
+              후보는 <b>평소 다니던 길</b>과<br>보호자와 함께 확인한 길에서 고름<br><br>
+              이동시간과 추정 위험을<br>함께 계산해 나란히 제시<br><br>
+              빠른 길 · 안전 우선 길의<br>예상 시간과 위험 노출 비교
+            </div>
+          </div>
+          <div class="st">
+            <div class="k">03 GUIDE</div>
+            <div class="h">보행 안내</div>
+            <div class="d">
+              길을 고르는 일은 <b>출발 전에</b> 끝냄<br><br>
+              이동 중에는 화면 없이<br>음성과 진동으로만 안내<br><br>
+              횡단 전 좌우 확인 유도<br>알림은 위험한 구간만 선별
+            </div>
+          </div>
+        </div>
+
+        <div class="guard">
+          <div class="gt">개인정보 보호 설계</div>
+          <div class="gd">
+            법정대리인 동의 · 안내용 실시간 위치는 안내 후 삭제 · 보호자 확인용 기록은 최소 범위로 보관 후 삭제 ·
+            학습용 자료는 보호자 확인용 기록과 분리해 <b>구간별 통행 빈도로만 집계</b> ·
+            이용자가 적어 개인을 알아볼 수 있는 구간은 제외 · 안내를 켠 동안에만 위치 사용 · 보호자 공유는 동의 범위 내
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">›</div>
+
+    <!-- 출력 -->
+    <div>
+      <div class="stage-label">사용자가 받는 것</div>
+      <div class="box out">
+        <div class="bt">아이 — 출발 전</div>
+        <div class="bd">오늘 조건에서 두 경로의 <b>예상 시간과 위험 노출</b> 비교, 길 선택</div>
+      </div>
+      <div class="box out">
+        <div class="bt">아이 — 이동 중</div>
+        <div class="bd">화면을 보지 않는 <b>음성 · 진동 안내</b>, 위험 횡단보도 앞 좌우 확인</div>
+      </div>
+      <div class="box out">
+        <div class="bt">보호자</div>
+        <div class="bd">등교 전 오늘 위험 구간, 출발과 도착 확인, <b>도착 지연 알림</b>, 하교 후 요약</div>
+      </div>
+      <div class="box out">
+        <div class="bt">아이 — 투명성</div>
+        <div class="bd">보호자에게 <b>무엇이 전달되는지</b> 아이 화면에도 그대로 표시</div>
+      </div>
+      <div class="box">
+        <div class="bt">학교 · 지자체 <span class="src">검증 후</span></div>
+        <div class="bd">조건별 고위험 구간 목록을 <b>통학로 개선 참고자료</b>로 제공</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 피드백 루프 -->
+  <div class="feedback">
+    <div class="fb-arrow">↺</div>
+    <div>
+      <div class="fb-t">향후 개선 — 통행 자료를 모아 추천을 보완</div>
+      <div class="fb-d">
+        동의 범위에서 집계한 <b>구간별 통행 빈도</b>가 다시 입력으로 들어갑니다.
+        사고 건수만 보면 안전한 길과 사람이 거의 다니지 않는 길을 구분하기 어렵지만,
+        통행량을 함께 살펴 판단을 보완할 계획입니다.
+        기록이 없는 지역에서는 보도 · 횡단보도 정보로 만든 기본 경로부터 시작합니다.
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>향후 계획: 학교 한 곳 주변 1~2km에서 자료 연결 → 위험 추정 → 경로 비교 프로토타입 제작. 추가시간·안내 방식 점검.</span>
+    <span>AI 서낭 — 3분 먼저 피하는 등하굣길</span>
+  </div>
+
+</div>
+</body>
+</html>
